@@ -35,9 +35,6 @@ class ImageLoader {
         this.statusEl = document.getElementById('status');
         this.progressBar = document.getElementById('progressBar');
         this.gallery = document.getElementById('gallery');
-        this.loadedCount = document.getElementById('loadedCount');
-        this.successCount = document.getElementById('successCount');
-        this.errorCount = document.getElementById('errorCount');
         
         this.imageCountInput = document.getElementById('imageCount');
         this.decrementBtn = document.getElementById('decrementBtn');
@@ -108,13 +105,6 @@ class ImageLoader {
         this.statusEl.textContent = message;
     }
     
-    // 更新统计信息
-    updateStats() {
-        this.loadedCount.textContent = this.loaded;
-        this.successCount.textContent = this.success;
-        this.errorCount.textContent = this.errors;
-    }
-    
     // 更新进度条
     updateProgress(percent) {
         this.progressBar.style.width = `${percent}%`;
@@ -128,7 +118,6 @@ class ImageLoader {
         this.errors = 0;
         this.gallery.innerHTML = '';
         this.updateStatus('已重置页面，点击按钮重新加载图片');
-        this.updateStats();
         this.updateProgress(0);
         this.loadBtn.disabled = false;
     }
@@ -243,7 +232,6 @@ class ImageLoader {
         this.loaded = 0;
         this.success = 0;
         this.errors = 0;
-        this.updateStats();
         this.updateProgress(0);
         this.updateStatus('开始加载...');
         this.gallery.innerHTML = '';
@@ -252,7 +240,6 @@ class ImageLoader {
             this.loaded++;
             this.updateStatus(`正在加载图片 ${this.loaded}/${img_num}...`);
             this.updateProgress((this.loaded / img_num) * 100);
-            this.updateStats();
 
             const card = this.createPlaceholderCard(i);
             this.gallery.appendChild(card);
@@ -262,14 +249,12 @@ class ImageLoader {
                 this.fillCardWithImage(card, imageUrl, i);
                 this.images.push(imageUrl);
                 this.success++;
-                this.updateStats();
 
                 await new Promise(resolve => setTimeout(resolve, 200));
             } catch (error) {
                 console.error(`图片 #${i+1} 加载失败: ${error.message}`);
                 this.markCardAsError(card, i, error.message);
                 this.errors++;
-                this.updateStats();
             }
         }
 

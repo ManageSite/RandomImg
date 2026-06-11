@@ -337,36 +337,6 @@ button:disabled {
     min-height: 28px;
 }
 
-/* ─── Stats ─── */
-.stats {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin: 24px auto;
-    padding: 16px 24px;
-    max-width: 480px;
-}
-
-.stat-item {
-    text-align: center;
-    flex: 1;
-}
-
-.stat-value {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #ff7ed4;
-    line-height: 1.2;
-}
-
-.stat-label {
-    font-size: 0.8rem;
-    color: #8a8ab8;
-    font-weight: 500;
-    margin-top: 2px;
-    letter-spacing: 0.02em;
-}
-
 /* ─── Gallery (Masonry) ─── */
 .gallery {
     columns: 4 240px;

@@ -361,10 +361,6 @@ button:disabled {
     border-color: rgba(255, 255, 255, 0.12);
 }
 
-.image-card:hover .image-info {
-    background: rgba(0, 0, 0, 0.45);
-}
-
 .image-container {
     display: block;
     overflow: hidden;
@@ -380,16 +376,6 @@ button:disabled {
 
 .image-card:hover .image-container img {
     transform: scale(1.04);
-}
-
-.image-info {
-    padding: 10px 12px;
-    text-align: center;
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: #b0b0d8;
-    background: rgba(0, 0, 0, 0.3);
-    transition: background 0.3s ease;
 }
 
 /* ─── Loading / Skeleton ─── */

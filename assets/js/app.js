@@ -184,10 +184,8 @@ class ImageLoader {
     createPlaceholderCard(index) {
         const card = document.createElement('div');
         card.className = 'image-card loading';
-        card.dataset.index = index;
         card.innerHTML = `
             <div class="image-container"></div>
-            <div class="image-info">${index + 1}</div>
         `;
         return card;
     }
@@ -198,7 +196,6 @@ class ImageLoader {
             <div class="image-container">
                 <img src="${url}" alt="二次元图片 #${index + 1}" loading="lazy">
             </div>
-            <div class="image-info">${index + 1}</div>
         `;
     }
 
@@ -209,7 +206,6 @@ class ImageLoader {
                 <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
                 <div class="error-text">加载失败</div>
             </div>
-            <div class="image-info">${index + 1}</div>
         `;
     }
 

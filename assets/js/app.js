@@ -192,40 +192,46 @@ class ImageLoader {
         }
     }
     
-    async loadCard(url, index) {
-        // 创建占位卡片
+    createPlaceholderCard(index) {
         const card = document.createElement('div');
         card.className = 'image-card loading';
+        card.dataset.index = index;
+        card.innerHTML = `
+            <div class="image-container"></div>
+            <div class="image-info">${index + 1}</div>
+        `;
+        return card;
+    }
+
+    fillCardWithImage(card, url, index) {
+        card.className = 'image-card';
         card.innerHTML = `
             <div class="image-container">
-                <div style="color:#aaa; font-size:14px;">加载中...</div>
+                <img src="${url}" alt="二次元图片 #${index + 1}" loading="lazy">
             </div>
-            <div class="image-info">图片 #${index+1}</div>
+            <div class="image-info">${index + 1}</div>
         `;
+    }
+
+    markCardAsError(card, index, message) {
+        card.className = 'image-card error';
+        card.innerHTML = `
+            <div class="image-container">
+                <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+                <div class="error-text">加载失败</div>
+            </div>
+            <div class="image-info">${index + 1}</div>
+        `;
+    }
+
+    async loadCard(url, index) {
+        const card = this.createPlaceholderCard(index);
         this.gallery.appendChild(card);
-        
+
         try {
-            // 更新卡片显示处理后的图片
-            card.className = 'image-card';
-            card.innerHTML = `
-                <div class="image-container">
-                    <img src="${url}" alt="二次元图片 #${index+1}">
-                </div>
-                <div class="image-info">${index+1}</div>
-            `;
-            
+            this.fillCardWithImage(card, url, index);
         } catch (error) {
-            // 更新卡片显示错误信息
-            card.className = 'image-card';
-            card.innerHTML = `
-                <div class="image-container" style="background:#f4433620; color:#ff5555;">
-                    <div style="text-align:center; padding:10px; font-size:14px;">
-                        <div>加载失败</div>
-                        <div style="font-size:12px; margin-top:5px;">${error.message}</div>
-                    </div>
-                </div>
-                <div class="image-info">图片 #${index+1}</div>
-            `;
+            this.markCardAsError(card, index, error.message);
             throw error;
         }
     }
@@ -241,42 +247,35 @@ class ImageLoader {
         this.updateProgress(0);
         this.updateStatus('开始加载...');
         this.gallery.innerHTML = '';
-        
-        try {
-            for (let i = 0; i < img_num; i++) {
-                this.loaded++;
-                this.updateStatus(`正在加载图片 ${this.loaded}/${img_num}...`);
-                this.updateProgress((this.loaded / img_num) * 100);
-                this.updateStats();
-                
-                try {
-                    // 获取图片URL并处理尺寸
-                    const imageUrl = await this.fetchImageUrl();
-                    this.loadCard(imageUrl, i);
 
-                    this.images.push(imageUrl);
-                    this.success++;
-                    this.updateStats();
-                    
-                    // 添加一点延迟避免请求过快
-                    await new Promise(resolve => setTimeout(resolve, 200));
-                    
-                } catch (error) {
-                    console.error(`图片 #${i+1} 加载失败: ${error.message}`);
-                    this.errors++;
-                    this.updateStats();
-                }
+        for (let i = 0; i < img_num; i++) {
+            this.loaded++;
+            this.updateStatus(`正在加载图片 ${this.loaded}/${img_num}...`);
+            this.updateProgress((this.loaded / img_num) * 100);
+            this.updateStats();
+
+            const card = this.createPlaceholderCard(i);
+            this.gallery.appendChild(card);
+
+            try {
+                const imageUrl = await this.fetchImageUrl();
+                this.fillCardWithImage(card, imageUrl, i);
+                this.images.push(imageUrl);
+                this.success++;
+                this.updateStats();
+
+                await new Promise(resolve => setTimeout(resolve, 200));
+            } catch (error) {
+                console.error(`图片 #${i+1} 加载失败: ${error.message}`);
+                this.markCardAsError(card, i, error.message);
+                this.errors++;
+                this.updateStats();
             }
-            
-            this.updateStatus(`图片加载完成！成功: ${this.success}张, 失败: ${this.errors}张`);
-            this.updateProgress(100);
-            
-        } catch (error) {
-            this.updateStatus(`加载过程中出错: ${error.message}`);
-            console.error('加载图片时出错:', error);
-        } finally {
-            this.resetBtn.disabled = false;
         }
+
+        this.updateStatus(`图片加载完成！成功: ${this.success}张, 失败: ${this.errors}张`);
+        this.updateProgress(100);
+        this.resetBtn.disabled = false;
     }
 }
 
